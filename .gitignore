@@ -8,4 +8,5 @@
 .ipynb_checkpoints/
 old_files/
 venv/
+.venv/
 data/seed.*
