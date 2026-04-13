@@ -41,25 +41,42 @@ The `theory/` notebooks contain annotated lesson explanations for each concept.
 ## 2. Analysis flow
 
 ```
-data/colors.csv  ──┐
-data/sets.csv    ──┼── pd.read_csv()  →  DataFrames
-data/themes.csv  ──┘
-                         │
-                         ├── .nunique()              →  unique colour count
-                         ├── boolean filter          →  transparent vs. opaque count
-                         │
-                         ├── .sort_values(year)      →  first sets ever released
-                         ├── .nlargest(num_parts)    →  largest set by part count
-                         │
-                         ├── .groupby(year).agg()    →  sets & themes per year
-                         │       └── dual-axis line chart
-                         │
-                         ├── .groupby(year).mean()   →  avg parts per year
-                         │       └── scatter plot
-                         │
-                         └── pd.merge(sets, themes)  →  sets with theme names
-                                 └── .groupby(name).count()
-                                         └── bar chart — top themes
+pipeline
+    │
+    │  ── [Ingestion] ────────────────────────────────────────────────────
+    ├── pd.read_csv()  →  colors.csv   →  colors
+    ├── pd.read_csv()  →  sets.csv     →  sets
+    ├── pd.read_csv()  →  themes.csv   →  themes
+    │
+    │  ── [Colour exploration] ───────────────────────────────────────────
+    ├── colors['name'].nunique()              →  total count of unique colours
+    ├── colors.groupby('is_trans').count()    →  transparent vs. opaque split
+    │
+    │  ── [Set exploration] ──────────────────────────────────────────────
+    ├── sets.sort_values('year').head()             →  first sets ever released and debut year
+    ├── sets[sets['year'] == first_year].shape[0]   →  number of sets sold in debut year
+    ├── sets.sort_values('num_parts', ascending=False).head()  →  top 5 largest sets
+    │
+    │  ── [Year-on-year aggregation] ─────────────────────────────────────
+    ├── sets.groupby('year').count()                      →  sets_by_year
+    ├── sets.groupby('year').agg({'theme_id': nunique})   →  themes_by_year
+    ├── themes_by_year.rename({'theme_id': 'nr_themes'})  →  clean column name
+    ├── [:-2] slice on both series                        →  exclude incomplete final two years
+    │
+    │  ── [Year trend visualisation] ─────────────────────────────────────
+    ├── ax1 = plt.gca() / ax2 = ax1.twinx()   →  dual Y-axis figure
+    ├── ax1.plot(sets_by_year)                 →  sets over time on left axis (green)
+    ├── ax2.plot(themes_by_year)               →  themes over time on right axis (blue)
+    │
+    │  ── [Complexity trend] ─────────────────────────────────────────────
+    ├── sets.groupby('year').agg({'num_parts': mean})  →  avg_parts — average parts per year
+    ├── plt.scatter(avg_parts.index, avg_parts)        →  part count growth trend over time
+    │
+    │  ── [Theme ranking] ────────────────────────────────────────────────
+    ├── sets['theme_id'].value_counts()               →  set count per theme_id
+    ├── pd.DataFrame({'id': ..., 'set_count': ...})   →  convert Series to DataFrame
+    ├── pd.merge(set_theme_count, themes, on='id')    →  merged_df — theme names joined in
+    └── plt.bar(merged_df.name[:10], merged_df.set_count[:10])  →  top 10 themes by set count
 ```
 
 ---
