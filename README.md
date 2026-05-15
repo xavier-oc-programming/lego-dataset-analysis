@@ -1,227 +1,254 @@
 # LEGO Dataset Analysis
 
-Exploratory analysis of the LEGO dataset — sets, colours, themes, and complexity over time.
+Licensed IP grew from zero to 27.6% of LEGO's annual releases between 1999 and 2017 — but the deeper transformation was complexity. Average parts per set grew 8× over seven decades, from 32 in the 1950s to 259 by the 2020s, while total annual volume scaled from 5 sets to over 6,800. This project maps that transformation across five analytical dimensions using three relational datasets covering every LEGO product ever produced.
 
-This analysis investigates the full history of LEGO product releases using three relational datasets from Rebrickable. It answers questions about when LEGO launched its first sets, which themes dominate the catalogue, how product complexity has evolved, and what strategic inflection points are visible in the year-on-year data. Charts produced include a dual-axis line chart of sets and themes over time, a scatter plot of average part count by year, and a bar chart of the top LEGO themes by set count.
-
-The datasets come from [Rebrickable](https://rebrickable.com/downloads/), which compiles a complete inventory of every LEGO element ever produced. Three CSV files are used: `colors.csv` (135 colours with RGB values and transparency flags), `sets.csv` (over 11,000 sets with year, theme, and part count), and `themes.csv` (457 themes in a self-referential parent/child hierarchy). The pipeline loads and joins these files with pandas, aggregates by year and theme, and derives computed columns for analysis.
-
-No external APIs or credentials are required. All data is committed to the repository as curated seed files sourced from Rebrickable.
+The analysis uses 15,710 sets, 596 themes, and 135 colours from Rebrickable, extended with inventory-level part data to trace colour introductions year by year. The pipeline answers: when did licensed IP enter the portfolio, how has set complexity stratified into distinct tiers, how did the colour vocabulary expand across decades, what does the full theme hierarchy look like when resolved to root parents, and how do all these metrics shift decade by decade.
 
 ---
 
-## Table of Contents
-
-1. [Quick start](#1-quick-start)
-2. [Analysis flow](#2-analysis-flow)
-3. [Features](#3-features)
-4. [Dataset schema](#4-dataset-schema)
-5. [Architecture](#5-architecture)
-6. [Notebook reference](#6-notebook-reference)
-7. [Configuration reference](#7-configuration-reference)
-8. [Course context](#8-course-context)
-9. [Dependencies](#9-dependencies)
-
----
-
-## 1. Quick start
+## Quick Start
 
 ```bash
 git clone https://github.com/xavier-oc-programming/lego-dataset-analysis.git
 cd lego-dataset-analysis
 pip install -r requirements.txt
-jupyter notebook
+jupyter notebook notebooks/analysis/lego_analysis.ipynb
 ```
 
-Open `practice/A_01_LEGO_Analysis.ipynb` first to run the full analysis end-to-end.  
-The `theory/` notebooks contain annotated lesson explanations for each concept.
+The notebook decompresses `data/inventory_parts.csv.gz` automatically on first run — no manual setup required.
 
 ---
 
-## 2. Analysis flow
+## Analysis Flow
 
 ```
 pipeline
     │
     │  ── [Ingestion] ────────────────────────────────────────────────────
-    ├── pd.read_csv()  →  colors.csv   →  colors
-    ├── pd.read_csv()  →  sets.csv     →  sets
-    ├── pd.read_csv()  →  themes.csv   →  themes
+    ├── pd.read_csv()  →  colors.csv        →  colors      (135 colours)
+    ├── pd.read_csv()  →  sets.csv          →  sets        (15,710 sets)
+    ├── pd.read_csv()  →  themes.csv        →  themes      (596 themes)
+    ├── pd.read_csv()  →  inventories.csv   →  inventories
+    ├── gunzip + read  →  inventory_parts.csv.gz  →  inv_parts
     │
-    │  ── [Colour exploration] ───────────────────────────────────────────
-    ├── colors['name'].nunique()              →  total count of unique colours
-    ├── colors.groupby('is_trans').count()    →  transparent vs. opaque split
+    │  ── [Original analysis] ────────────────────────────────────────────
+    ├── colors.nunique / groupby('is_trans')           →  colour counts
+    ├── sets.sort_values('year').head()                →  first sets / debut year
+    ├── sets.sort_values('num_parts').tail()           →  top 5 largest sets
+    ├── sets.groupby('year').count()                   →  sets_by_year
+    ├── sets.groupby('year').agg(nunique)              →  themes_by_year
+    ├── twinx dual-axis line chart                     →  sets & themes over time
+    ├── groupby('year').agg(mean)                      →  avg_parts scatter plot
+    ├── value_counts + pd.merge(themes)                →  top themes bar chart
     │
-    │  ── [Set exploration] ──────────────────────────────────────────────
-    ├── sets.sort_values('year').head()             →  first sets ever released and debut year
-    ├── sets[sets['year'] == first_year].shape[0]   →  number of sets sold in debut year
-    ├── sets.sort_values('num_parts', ascending=False).head()  →  top 5 largest sets
+    │  ── [Analysis 1 — Licensed IP] ─────────────────────────────────────
+    ├── keyword match on theme names                   →  ip_type column
+    ├── merge(sets, themes[ip_type])                   →  sets_ip
+    ├── groupby(['year','ip_type']).size().unstack()   →  stacked bar chart
+    ├── ip_pct = Licensed / total per year             →  licensed share trend
+    └── top-5 licensed themes by set count
     │
-    │  ── [Year-on-year aggregation] ─────────────────────────────────────
-    ├── sets.groupby('year').count()                      →  sets_by_year
-    ├── sets.groupby('year').agg({'theme_id': nunique})   →  themes_by_year
-    ├── themes_by_year.rename({'theme_id': 'nr_themes'})  →  clean column name
-    ├── [:-2] slice on both series                        →  exclude incomplete final two years
+    │  ── [Analysis 2 — Complexity Clustering] ───────────────────────────
+    ├── num_parts / annual_mean  →  relative_complexity feature
+    ├── StandardScaler + KMeans(k=4)                   →  4 complexity tiers
+    ├── label by mean parts: Starter→Standard→Advanced→Expert
+    ├── scatter(year, num_parts, colour=cluster)       →  cluster scatter
+    └── cluster distribution bar chart per top-10 theme
     │
-    │  ── [Year trend visualisation] ─────────────────────────────────────
-    ├── ax1 = plt.gca() / ax2 = ax1.twinx()   →  dual Y-axis figure
-    ├── ax1.plot(sets_by_year)                 →  sets over time on left axis (green)
-    ├── ax2.plot(themes_by_year)               →  themes over time on right axis (blue)
+    │  ── [Analysis 3 — Colour Evolution] ────────────────────────────────
+    ├── inv_parts → inventories → sets  →  color_year (year per colour use)
+    ├── groupby('color_id').year.min()  →  first_appearance per colour
+    ├── cumsum of new colours by year   →  palette growth line chart
+    ├── first_year where is_trans=='t'  →  transparent colour debut
+    ├── new colours introduced per decade  →  decade bar chart
+    └── hue-sorted swatch grid (all 135 colours)
     │
-    │  ── [Complexity trend] ─────────────────────────────────────────────
-    ├── sets.groupby('year').agg({'num_parts': mean})  →  avg_parts — average parts per year
-    ├── plt.scatter(avg_parts.index, avg_parts)        →  part count growth trend over time
+    │  ── [Analysis 4 — Theme Hierarchy] ─────────────────────────────────
+    ├── recursive resolve_root(theme_id)  →  root_id + depth per theme
+    ├── max depth = 2 (broad, not deep taxonomy)
+    ├── sets.merge(root_id) → groupby(root_id).count()  →  root set totals
+    └── bar chart: top 15 parent themes by cumulative set count
     │
-    │  ── [Theme ranking] ────────────────────────────────────────────────
-    ├── sets['theme_id'].value_counts()               →  set count per theme_id
-    ├── pd.DataFrame({'id': ..., 'set_count': ...})   →  convert Series to DataFrame
-    ├── pd.merge(set_theme_count, themes, on='id')    →  merged_df — theme names joined in
-    └── plt.bar(merged_df.name[:10], merged_df.set_count[:10])  →  top 10 themes by set count
+    │  ── [Analysis 5 — Decade Summary] ──────────────────────────────────
+    ├── sets['decade'] = (year // 10) * 10
+    ├── groupby(decade): total sets, unique themes, avg parts, % licensed
+    ├── most popular theme per decade
+    └── pandas Styler with Blues gradient on numeric columns
 ```
 
 ---
 
-## 3. Features
+## Key Findings
 
-- Count of unique LEGO colours, split by transparent vs. opaque
-- Year LEGO first launched and number of sets in the debut year
-- Largest LEGO set ever created (by part count)
-- Year-on-year count of new sets and new themes (dual-axis line chart)
-- Average parts-per-set over time — does complexity increase? (scatter plot)
-- Top LEGO themes by total set count, with parent theme resolved (bar chart)
+**Licensed IP grew steadily but never dominated.** Star Wars, introduced in 1999, remains the single largest licensed franchise at 776 sets. Licensed themes peaked at 27.6% of annual releases in 2017, up from 0% before 1999, 8.2% in 2000, 15.6% in 2010, and 22.0% in 2020. The portfolio remained majority original-IP throughout — but licensed sets disproportionately drove complexity and premium positioning.
+
+**Set complexity grew 8× over seven decades.** Average parts per set rose from 32 in the 1950s to 259 in the 2020s. K-Means clustering identifies four tiers: Starter, Standard, Advanced, and Expert. Technic and architectural lines dominate the Expert cluster; City and seasonal sets anchor the Starter band. The gap between tiers has widened over time — Expert sets today have roughly 4× the parts of Expert sets from the 1980s.
+
+**The colour palette tripled in the 2000s alone.** Of 132 colours used in sets, 53 were introduced in the 2000s — more than in the preceding five decades combined. Transparent colours debuted in 1954. The 1990s added 38 colours; the 2010s added only 14, suggesting the palette neared saturation. The full hue-sorted swatch grid is in `plots/colour_palette_swatches.png`.
+
+**LEGO's theme hierarchy is broad, not deep.** The self-referential parent/child structure reaches a maximum depth of 2 levels. Town is the largest parent theme by cumulative set count (1,304 sets), followed by Duplo (1,268) and Gear (1,049). Star Wars ranks fourth with 791 sets despite spanning only 22 years. Technic leads on sub-theme count, reflecting decades of product line expansion.
+
+**Volume scaled 1,000× while complexity grew 8×.** The decade table shows 5 sets in the 1940s, 1,212 in the 1980s, and 6,813 in the 2010s. The 2000s were the inflection decade: set count doubled, licensed share jumped from 0.7% to 8.5%, and 53 new colours entered the palette — all driven by the franchise deals signed at the turn of the millennium.
 
 ---
 
-## 4. Dataset schema
+## Dataset Schema
 
 ### colors.csv
 
 | Column | Type | Description |
 |--------|------|-------------|
 | id | int | Unique colour ID |
-| name | str | Colour name (e.g. "Black", "Bright Green") |
-| rgb | str | Hex RGB value without `#` prefix |
-| is_trans | str | `t` if transparent, `f` if opaque |
+| name | str | Colour name |
+| rgb | str | Hex RGB value (no `#` prefix) |
+| is_trans | str | `t` = transparent, `f` = opaque |
 
 ### sets.csv
 
 | Column | Type | Description |
 |--------|------|-------------|
-| set_num | str | Unique set identifier (primary key) |
+| set_num | str | Unique set identifier |
 | name | str | Set name |
-| year | int | Year the set was released |
+| year | int | Release year |
 | theme_id | int | Foreign key → themes.id |
-| num_parts | int | Number of parts in the set |
+| num_parts | int | Part count |
 
-**Computed columns (added at runtime)**
+**Computed columns**
 
 | Column | Derived from | Description |
 |--------|-------------|-------------|
-| set_count | groupby(year) | Number of sets released per year |
-| avg_parts | groupby(year).mean() | Average part count per year |
+| ip_type | theme name keyword match | `Licensed` or `Original` |
+| relative_complexity | num_parts / annual mean | Part count relative to era average |
+| complexity | KMeans cluster label | Starter / Standard / Advanced / Expert |
+| root_id | recursive parent_id walk | Top-level parent theme ID |
+| decade | year // 10 * 10 | Decade bin |
 
 ### themes.csv
 
 | Column | Type | Description |
 |--------|------|-------------|
-| id | int | Unique theme ID (primary key) |
-| name | str | Theme name (e.g. "Technic", "Star Wars") |
-| parent_id | float | ID of parent theme; NaN if top-level |
+| id | int | Unique theme ID |
+| name | str | Theme name |
+| parent_id | float | Parent theme ID; NaN if top-level |
+
+### inventories.csv
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | int | Inventory ID |
+| version | int | Inventory version |
+| set_num | str | Foreign key → sets.set_num |
+
+### inventory_parts.csv.gz
+
+| Column | Type | Description |
+|--------|------|-------------|
+| inventory_id | int | Foreign key → inventories.id |
+| part_num | str | Part identifier |
+| color_id | int | Foreign key → colors.id |
+| quantity | int | Count in this inventory |
+| is_spare | bool | Whether this is a spare part |
 
 ---
 
-## 5. Architecture
+## Architecture
 
 ```
 lego-dataset-analysis/
 │
-├── theory/                              # Lesson notebooks — concepts and annotated solutions
-│   ├── 00__Overview.ipynb               # Day 74 goals and final output preview
-│   ├── 01__HTML_Markdown_Notebooks.ipynb# HTML in Markdown cells, image embedding
-│   ├── 02__Exploring_LEGO_Colours.ipynb # nunique, value counts, boolean filters
-│   ├── 03__Oldest_and_Largest_Sets.ipynb# sort_values, nlargest, nsmallest
-│   ├── 04__Sets_Published_over_Time.ipynb# groupby + line chart
-│   ├── 05__Pandas_agg_Function.ipynb    # .agg() with multiple aggregations
-│   ├── 06__Superimposed_Line_Charts.ipynb# twinx, dual Y-axes, axis colouring
-│   ├── 07__Scatter_Plots_Parts_per_Set.ipynb# scatter plot, alpha, trend reading
-│   ├── 08__Relational_Schemas_Keys.ipynb# primary/foreign keys, schema diagrams
-│   ├── 09__Merge_DataFrames_Bar_Charts.ipynb# pd.merge, bar charts
-│   └── 10__Learning_Points_Summary.ipynb# Day summary and key takeaways
-│
-├── practice/
-│   └── A_01_LEGO_Analysis.ipynb         # Student exercise notebook — full analysis
+├── notebooks/
+│   ├── analysis/
+│   │   └── lego_analysis.ipynb        # main analysis — original + 5 improvements
+│   └── concepts/                      # annotated concept notebooks
+│       ├── 00__Overview.ipynb
+│       ├── 01__HTML_Markdown_Notebooks.ipynb
+│       ├── 02__Exploring_LEGO_Colours.ipynb
+│       ├── 03__Oldest_and_Largest_Sets.ipynb
+│       ├── 04__Sets_Published_over_Time.ipynb
+│       ├── 05__Pandas_agg_Function.ipynb
+│       ├── 06__Superimposed_Line_Charts.ipynb
+│       ├── 07__Scatter_Plots_Parts_per_Set.ipynb
+│       ├── 08__Relational_Schemas_Keys.ipynb
+│       ├── 09__Merge_DataFrames_Bar_Charts.ipynb
+│       └── 10__Learning_Points_Summary.ipynb
 │
 ├── data/
-│   ├── colors.csv                       # 135 LEGO colours with RGB and transparency
-│   ├── sets.csv                         # 11,000+ LEGO sets with year and part count
-│   └── themes.csv                       # 457 themes in parent/child hierarchy
+│   ├── colors.csv                     # 135 LEGO colours with RGB and transparency
+│   ├── sets.csv                       # 15,710 sets with year, theme, part count
+│   ├── themes.csv                     # 596 themes in parent/child hierarchy
+│   ├── inventories.csv                # set → inventory mapping
+│   └── inventory_parts.csv.gz         # colour usage per inventory (decompressed at runtime)
+│
+├── plots/                             # generated charts (not committed)
+│   ├── licensed_vs_original.png
+│   ├── complexity_clusters_scatter.png
+│   ├── complexity_clusters_by_theme.png
+│   ├── colour_palette_growth.png
+│   ├── colour_palette_swatches.png
+│   ├── colour_introductions_by_decade.png
+│   └── theme_hierarchy_top15.png
 │
 ├── assets/
-│   ├── bricks.jpg                       # Header image used in notebooks
-│   ├── lego_sets.png                    # Reference image — example sets
-│   ├── lego_themes.png                  # Reference image — themes breakdown
-│   └── rebrickable_schema.png           # Entity-relationship diagram for datasets
+│   ├── bricks.jpg
+│   ├── lego_sets.png
+│   ├── lego_themes.png
+│   └── rebrickable_schema.png
 │
 ├── docs/
-│   └── COURSE_NOTES.md                  # Exercise brief, key concepts, data description
+│   └── COURSE_NOTES.md
 │
-├── requirements.txt                     # Pinned package requirements
+├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
 ---
 
-## 6. Notebook reference
+## Visualisations
 
-### theory/
+| File | Description |
+|------|-------------|
+| `licensed_vs_original.png` | Stacked bar: licensed vs original set count per year from 1980 |
+| `complexity_clusters_scatter.png` | Scatter: year vs part count coloured by K-Means tier |
+| `complexity_clusters_by_theme.png` | Bar chart: cluster distribution for the top 10 themes |
+| `colour_palette_growth.png` | Line chart: cumulative colour count over time with transparent-colour debut marked |
+| `colour_palette_swatches.png` | Grid of all 135 colours sorted by hue; white border = transparent |
+| `colour_introductions_by_decade.png` | Bar chart: new colours introduced per decade |
+| `theme_hierarchy_top15.png` | Bar chart: top 15 parent themes by total set count across all sub-themes |
 
-| Notebook | Key methods covered | Question answered |
-|----------|--------------------|--------------------|
-| 00__Overview | — | What will we build today? |
-| 01__HTML_Markdown_Notebooks | HTML in Markdown, `<img>` | How to style notebooks? |
-| 02__Exploring_LEGO_Colours | `.nunique()`, boolean filter | How many colours exist? How many transparent? |
-| 03__Oldest_and_Largest_Sets | `.sort_values()`, `.nlargest()` | When did LEGO launch? What is the largest set? |
-| 04__Sets_Published_over_Time | `.groupby()`, `.plot()` | How has the number of sets grown each year? |
-| 05__Pandas_agg_Function | `.agg({col: fn})` | How to apply multiple aggregations at once? |
-| 06__Superimposed_Line_Charts | `ax.twinx()`, tick params | How to compare two metrics on different scales? |
-| 07__Scatter_Plots_Parts_per_Set | `ax.scatter()`, `alpha` | Has set complexity grown over time? |
-| 08__Relational_Schemas_Keys | primary/foreign key concepts | How are the three tables related? |
-| 09__Merge_DataFrames_Bar_Charts | `pd.merge()`, `.plot(kind='bar')` | Which themes have the most sets? |
-| 10__Learning_Points_Summary | — | What did we learn today? |
-
-### practice/
-
-| Notebook | Key methods covered | Question answered |
-|----------|--------------------|--------------------|
-| A_01_LEGO_Analysis | `.read_csv()`, `.nunique()`, `.groupby()`, `.agg()`, `pd.merge()`, `.plot()`, `ax.twinx()`, `ax.scatter()` | Full analysis: colours, oldest sets, largest set, year trends, top themes |
+Charts are generated at 150 dpi and saved to `plots/` when the notebook is executed. They are not committed — run the notebook to reproduce them.
 
 ---
 
-## 7. Configuration reference
+## Operations Reference
 
 | Value | Location | Description |
 |-------|----------|-------------|
-| `../data/colors.csv` | A_01_LEGO_Analysis.ipynb | Relative path to colours dataset |
-| `../data/sets.csv` | A_01_LEGO_Analysis.ipynb | Relative path to sets dataset |
-| `../data/themes.csv` | A_01_LEGO_Analysis.ipynb | Relative path to themes dataset |
-| `figsize=(16, 10)` | A_01_LEGO_Analysis.ipynb | Default figure size for charts |
-| `alpha=0.4` | A_01_LEGO_Analysis.ipynb | Scatter plot point transparency |
+| `../../data/colors.csv` | lego_analysis.ipynb | Path to colours dataset |
+| `../../data/sets.csv` | lego_analysis.ipynb | Path to sets dataset |
+| `../../data/themes.csv` | lego_analysis.ipynb | Path to themes dataset |
+| `../../data/inventories.csv` | lego_analysis.ipynb | Path to inventories dataset |
+| `../../data/inventory_parts.csv.gz` | lego_analysis.ipynb | Compressed inventory parts (auto-decompressed on first run) |
+| `../../plots/` | lego_analysis.ipynb | Output directory for all charts |
+| `figsize=(16, 10)` | lego_analysis.ipynb | Default figure size |
+| `dpi=150` | lego_analysis.ipynb | Chart export resolution |
+| `k=4` | Analysis 2 | Number of K-Means clusters |
+| `random_state=42` | Analysis 2 | KMeans seed for reproducibility |
 
 ---
 
-## 8. Course context
+## Background
 
-100 Days of Code — The Complete Python Pro Bootcamp, Day 74: Aggregate and Merge Data with Pandas.  
-See [docs/COURSE_NOTES.md](docs/COURSE_NOTES.md) for the full exercise brief and concept notes.
+This project was built as part of 100 Days of Code — The Complete Python Pro Bootcamp, Day 74: Aggregate and Merge Data with Pandas. See [docs/COURSE_NOTES.md](docs/COURSE_NOTES.md) for the original exercise brief and concept notes.
 
 ---
 
-## 9. Dependencies
+## Dependencies
 
-| Module | Used in | Purpose |
-|--------|---------|---------|
-| pandas | practice/, theory/ | DataFrame loading, groupby, merge, aggregation |
-| matplotlib | practice/, theory/ | Line charts, scatter plots, bar charts |
-| numpy | practice/ | Numerical operations (implicitly via pandas) |
-| notebook | all | Jupyter notebook runtime |
+| Package | Purpose |
+|---------|---------|
+| pandas | DataFrame loading, groupby, merge, aggregation, Styler |
+| matplotlib | Line charts, scatter plots, bar charts, swatch grids |
+| numpy | Numerical operations, NaN handling |
+| scikit-learn | KMeans clustering, StandardScaler |
+| notebook | Jupyter notebook runtime |
