@@ -1,8 +1,8 @@
 # LEGO Dataset Analysis
 
-Licensed IP grew from zero to 27.6% of LEGO's annual releases between 1999 and 2017. Average parts per set grew 8× over seven decades. Minifigure density rose 57% between the 1970s and 2010s. This project traces those shifts across six analytical dimensions using four relational datasets covering every LEGO product ever produced — 15,710 sets, 596 themes, 135 colours, and 25,000 minifigure inventory records from Rebrickable.
+In 1998 LEGO posted its first annual loss. By 2003 the company was close to insolvency — overextended, haemorrhaging cash, reportedly days from being acquired by Mattel. The turnaround is a business school case study. Star Wars launched in 1999, Harry Potter in 2001, and the number of sets and themes in LEGO's catalogue explodes from that point. This project uses 70 years of product data to quantify exactly what that shift looked like — and to ask whether licensed IP transformed what LEGO makes, or just how much of it.
 
-The central question: did licensed IP transform what LEGO makes, or just how much of it? The data shows both — franchise deals drove volume and colour palette expansion, but the deeper change was structural. Sets became character-delivery vehicles. Minifigure density and licensed share track the same curve from 2000 onward.
+The data shows both. Licensed share grew from 0% to a 27.6% peak in 2017. Average parts per set grew 8×. Minifigure density rose 57% between the 1970s and 2010s. The colour palette tripled in the 2000s alone. Those trends don't move independently — they move together, and they move from 1999. Six analyses across 15,710 sets, 596 themes, 135 colours, and 25,000 minifigure inventory records trace the mechanism.
 
 ---
 
