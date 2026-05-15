@@ -11,6 +11,5 @@ venv/
 .venv/
 data/seed.*
 data/inventory_parts.csv
-plots/*.png
 portfolio.yaml
-build_improvements.py
+add_analysis_6.py
