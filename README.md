@@ -224,9 +224,13 @@ pipeline
 ```
 lego-dataset-analysis/
 │
+├── .github/
+│   └── workflows/
+│       └── publish_notebook.yml       # CI/CD — renders notebook to HTML on push
+│
 ├── notebooks/
 │   ├── analysis/
-│   │   └── lego_analysis.ipynb        # main analysis — baseline + 6 improvements
+│   │   └── lego_analysis.ipynb        # main analysis — baseline + 6 analyses
 │   └── concepts/                      # annotated concept notebooks
 │       └── [11 notebooks]
 │
@@ -250,7 +254,9 @@ lego-dataset-analysis/
 │   ├── minifig_density_scatter.png
 │   └── minifig_licensed_vs_original.png
 │
-├── assets/
+├── rendered/
+│   └── index.html                     # rendered notebook — auto-updated by CI/CD
+│
 ├── docs/
 │   └── COURSE_NOTES.md
 ├── requirements.txt
