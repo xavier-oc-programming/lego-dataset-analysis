@@ -4,7 +4,7 @@
 
 In 1998 LEGO posted its first annual loss. By 2003 the company was close to insolvency — overextended, haemorrhaging cash, reportedly days from being acquired by Mattel. The turnaround is a business school case study. Star Wars launched in 1999, Harry Potter in 2001, and the number of sets and themes in LEGO's catalogue explodes from that point. This project uses 70 years of product data to quantify exactly what that shift looked like — and to ask whether licensed IP transformed what LEGO makes, or just how much of it.
 
-The data shows both. Licensed share grew from 0% to a 27.6% peak in 2017. Average parts per set grew 8×. Minifigure density rose 57% between the 1970s and 2010s. The colour palette tripled in the 2000s alone. Those trends don't move independently — they move together, and they move from 1999. Six analyses across 15,710 sets, 596 themes, 135 colours, and 25,000 minifigure inventory records trace the mechanism.
+The data shows both. Licensed share grew from 0% to a 31.5% peak in 2019. Average parts per set grew 8×. Minifigure density rose 57% between the 1970s and 2010s. The colour palette tripled in the 2000s alone. Those trends don't move independently — they move together, and they move from 1999. Six analyses across 15,710 sets, 596 themes, 135 colours, and 25,000 minifigure inventory records trace the mechanism.
 
 ---
 
@@ -23,13 +23,13 @@ jupyter notebook notebooks/analysis/lego_analysis.ipynb
 
 ## Key Findings
 
-**Licensed IP grew to 27.6% of annual releases — significant but never the majority.** Star Wars is the single largest licensed franchise with 776 sets. Licensed share went from 0% before 1999 to 8.2% by 2000, 15.6% by 2010, and 22.0% by 2020, peaking at 27.6% in 2017.
+**Licensed IP grew to 31.5% of annual releases — significant but never the majority.** Star Wars is the single largest licensed franchise with 776 sets. Licensed share went from 0% before 1999 to 9.3% by 2000, 16.1% by 2010, and 30.6% by 2020, peaking at 31.5% in 2019.
 
 ![Licensed vs Original](plots/licensed_vs_original.png)
 
 ---
 
-**Sets became more character-focused as licensed IP scaled.** Minifigure density grew from 3.5 figures per 100 parts in the 1970s to 5.5 in the 2010s — a 57% increase. Licensed sets average 2.86 unique character types per set versus 2.37 for original IP. Pirates of the Caribbean leads at 4.7 unique fig types per set; Harry Potter and Indiana Jones average 4.2. The density trend and licensed share trend move in lockstep from 2000 onward.
+**Sets became more character-focused as licensed IP scaled.** Minifigure density grew from 3.5 figures per 100 parts in the 1970s to 5.5 in the 2010s — a 57% increase. Licensed sets average 2.95 unique character types per set versus 2.33 for original IP — a 27% premium. Pirates of the Caribbean leads at 4.7 unique fig types per set; Harry Potter and Indiana Jones average 4.2. The density trend and licensed share trend move in lockstep from 2000 onward.
 
 ![Minifigure Density by Decade](plots/minifig_density_by_decade.png)
 
@@ -55,16 +55,16 @@ jupyter notebook notebooks/analysis/lego_analysis.ipynb
 
 ---
 
-**The 2000s were the inflection decade across every metric.** Set count doubled, licensed share jumped from 0.7% to 8.5%, 53 new colours entered the palette, and minifigure density climbed from 3.2 to 4.4 per 100 parts — all within the same decade.
+**The 2000s were the inflection decade across every metric.** Set count doubled, licensed share jumped from 1.0% to 9.7%, 53 new colours entered the palette, and minifigure density climbed from 3.2 to 4.4 per 100 parts — all within the same decade.
 
 | Decade | Total Sets | Unique Themes | Avg Parts | % Licensed |
 |--------|-----------|---------------|-----------|------------|
 | 1950s | 135 | 6 | 32 | 0% |
 | 1970s | 620 | 62 | 108 | 0% |
-| 1990s | 2,041 | 170 | 125 | 0.7% |
-| 2000s | 3,831 | 279 | 166 | 8.5% |
-| 2010s | 6,813 | 254 | 196 | 20.6% |
-| 2020s | 677 | 82 | 259 | 21.9% |
+| 1990s | 2,041 | 170 | 125 | 1.0% |
+| 2000s | 3,831 | 279 | 166 | 9.7% |
+| 2010s | 6,813 | 254 | 196 | 22.2% |
+| 2020s | 677 | 82 | 259 | 30.9% |
 
 ---
 
