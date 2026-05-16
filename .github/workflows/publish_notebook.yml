@@ -27,15 +27,12 @@ jobs:
 
       - name: Convert notebook to HTML
         run: |
+          mkdir -p rendered
           jupyter nbconvert --to html \
             --no-input \
-            --output index.html \
+            --output-dir rendered \
+            --output index \
             notebooks/analysis/lego_analysis.ipynb
-
-      - name: Move to rendered directory
-        run: |
-          mkdir -p rendered
-          mv index.html rendered/index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
