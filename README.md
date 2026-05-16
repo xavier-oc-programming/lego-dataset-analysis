@@ -77,9 +77,9 @@ Regenerated automatically via GitHub Actions whenever `notebooks/analysis/lego_a
 
 ```bash
 jupyter nbconvert --to html --no-input \
-  --output index.html \
+  --output-dir rendered \
+  --output index \
   notebooks/analysis/lego_analysis.ipynb
-mv index.html rendered/index.html
 ```
 
 ---
