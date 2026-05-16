@@ -1,5 +1,7 @@
 # LEGO Dataset Analysis
 
+[![Publish Notebook](https://github.com/xavier-oc-programming/lego-dataset-analysis/actions/workflows/publish_notebook.yml/badge.svg)](https://github.com/xavier-oc-programming/lego-dataset-analysis/actions/workflows/publish_notebook.yml)
+
 In 1998 LEGO posted its first annual loss. By 2003 the company was close to insolvency — overextended, haemorrhaging cash, reportedly days from being acquired by Mattel. The turnaround is a business school case study. Star Wars launched in 1999, Harry Potter in 2001, and the number of sets and themes in LEGO's catalogue explodes from that point. This project uses 70 years of product data to quantify exactly what that shift looked like — and to ask whether licensed IP transformed what LEGO makes, or just how much of it.
 
 The data shows both. Licensed share grew from 0% to a 27.6% peak in 2017. Average parts per set grew 8×. Minifigure density rose 57% between the 1970s and 2010s. The colour palette tripled in the 2000s alone. Those trends don't move independently — they move together, and they move from 1999. Six analyses across 15,710 sets, 596 themes, 135 colours, and 25,000 minifigure inventory records trace the mechanism.
@@ -63,6 +65,22 @@ jupyter notebook notebooks/analysis/lego_analysis.ipynb
 | 2000s | 3,831 | 279 | 166 | 8.5% |
 | 2010s | 6,813 | 254 | 196 | 20.6% |
 | 2020s | 677 | 82 | 259 | 21.9% |
+
+---
+
+## Portfolio Integration
+
+Rendered notebook (outputs and charts only, no code):
+https://xavier-oc-programming.github.io/lego-dataset-analysis/rendered/
+
+Regenerated automatically via GitHub Actions whenever `notebooks/analysis/lego_analysis.ipynb` changes on main. To regenerate manually:
+
+```bash
+jupyter nbconvert --to html --no-input \
+  --output index.html \
+  notebooks/analysis/lego_analysis.ipynb
+mv index.html rendered/index.html
+```
 
 ---
 
