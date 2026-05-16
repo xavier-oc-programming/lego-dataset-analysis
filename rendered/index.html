@@ -7332,12 +7332,7 @@ a.anchor-link {
     if (!diagrams.length) {
       return;
     }
-    const mermaid = (await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/11.10.0/mermaid.esm.min.mjs")).default;
-    const elkUrl = "https://cdnjs.cloudflare.com/ajax/libs/mermaid-layout-elk/0.1.9/mermaid-layout-elk.esm.min.mjs";
-    if(elkUrl) {
-      const elkLayouts = (await import(elkUrl)).default;
-      mermaid.registerLayoutLoaders(elkLayouts);
-    }
+    const mermaid = (await import("https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.7.0/mermaid.esm.min.mjs")).default;
     const parser = new DOMParser();
 
     mermaid.initialize({
@@ -7434,8 +7429,7 @@ a.anchor-link {
      * Post-process to ensure mermaid diagrams contain only valid SVG and XHTML.
      */
     function cleanMermaidSvg(svg) {
-      svg = svg.replace(RE_VOID_ELEMENT, replaceVoidElement);
-      return `${SVG_XML_HEADER}${svg}`;
+      return svg.replace(RE_VOID_ELEMENT, replaceVoidElement);
     }
 
 
@@ -7461,285 +7455,6 @@ a.anchor-link {
       }
       return `<${tag} ${rest}>`;
     }
-
-
-  /**
-   * Named HTML entities with their decimal equivalent codes.
-   *
-   * @see https://www.w3.org/TR/WD-html40-970708/sgml/entities.html
-   * */
-  const HTML_ENTITIES = `<!ENTITY Aacute "&#193;">
-<!ENTITY aacute "&#225;">
-<!ENTITY Acirc "&#194;">
-<!ENTITY acirc "&#226;">
-<!ENTITY acute "&#180;">
-<!ENTITY AElig "&#198;">
-<!ENTITY aelig "&#230;">
-<!ENTITY Agrave "&#192;">
-<!ENTITY agrave "&#224;">
-<!ENTITY alefsym "&#8501;">
-<!ENTITY Alpha "&#913;">
-<!ENTITY alpha "&#945;">
-<!ENTITY amp "&#38;">
-<!ENTITY and "&#8869;">
-<!ENTITY ang "&#8736;">
-<!ENTITY Aring "&#197;">
-<!ENTITY aring "&#229;">
-<!ENTITY asymp "&#8776;">
-<!ENTITY Atilde "&#195;">
-<!ENTITY atilde "&#227;">
-<!ENTITY Auml "&#196;">
-<!ENTITY auml "&#228;">
-<!ENTITY bdquo "&#8222;">
-<!ENTITY Beta "&#914;">
-<!ENTITY beta "&#946;">
-<!ENTITY brvbar "&#166;">
-<!ENTITY bull "&#8226;">
-<!ENTITY cap "&#8745;">
-<!ENTITY Ccedil "&#199;">
-<!ENTITY ccedil "&#231;">
-<!ENTITY cedil "&#184;">
-<!ENTITY cent "&#162;">
-<!ENTITY Chi "&#935;">
-<!ENTITY chi "&#967;">
-<!ENTITY circ "&#710;">
-<!ENTITY clubs "&#9827;">
-<!ENTITY cong "&#8773;">
-<!ENTITY copy "&#169;">
-<!ENTITY crarr "&#8629;">
-<!ENTITY cup "&#8746;">
-<!ENTITY curren "&#164;">
-<!ENTITY dagger "&#8224;">
-<!ENTITY Dagger "&#8225;">
-<!ENTITY darr "&#8595;">
-<!ENTITY dArr "&#8659;">
-<!ENTITY deg "&#176;">
-<!ENTITY Delta "&#916;">
-<!ENTITY delta "&#948;">
-<!ENTITY diams "&#9830;">
-<!ENTITY divide "&#247;">
-<!ENTITY Eacute "&#201;">
-<!ENTITY eacute "&#233;">
-<!ENTITY Ecirc "&#202;">
-<!ENTITY ecirc "&#234;">
-<!ENTITY Egrave "&#200;">
-<!ENTITY egrave "&#232;">
-<!ENTITY empty "&#8709;">
-<!ENTITY emsp "&#8195;">
-<!ENTITY ensp "&#8194;">
-<!ENTITY epsilon "&#949;">
-<!ENTITY Epsilon "&#917;">
-<!ENTITY equiv "&#8801;">
-<!ENTITY Eta "&#919;">
-<!ENTITY eta "&#951;">
-<!ENTITY ETH "&#208;">
-<!ENTITY eth "&#240;">
-<!ENTITY Euml "&#203;">
-<!ENTITY euml "&#235;">
-<!ENTITY exist "&#8707;">
-<!ENTITY fnof "&#402;">
-<!ENTITY forall "&#8704;">
-<!ENTITY frac12 "&#189;">
-<!ENTITY frac14 "&#188;">
-<!ENTITY frac34 "&#190;">
-<!ENTITY frasl "&#8260;">
-<!ENTITY Gamma "&#915;">
-<!ENTITY gamma "&#947;">
-<!ENTITY ge "&#8805;">
-<!ENTITY gt "&#62;">
-<!ENTITY harr "&#8596;">
-<!ENTITY hArr "&#8660;">
-<!ENTITY hearts "&#9829;">
-<!ENTITY hellip "&#8230;">
-<!ENTITY Iacute "&#205;">
-<!ENTITY iacute "&#237;">
-<!ENTITY Icirc "&#206;">
-<!ENTITY icirc "&#238;">
-<!ENTITY iexcl "&#161;">
-<!ENTITY Igrave "&#204;">
-<!ENTITY igrave "&#236;">
-<!ENTITY image "&#8465;">
-<!ENTITY infin "&#8734;">
-<!ENTITY int "&#8747;">
-<!ENTITY Iota "&#921;">
-<!ENTITY iota "&#953;">
-<!ENTITY iquest "&#191;">
-<!ENTITY isin "&#8712;">
-<!ENTITY Iuml "&#207;">
-<!ENTITY iuml "&#239;">
-<!ENTITY Kappa "&#922;">
-<!ENTITY kappa "&#954;">
-<!ENTITY Lambda "&#923;">
-<!ENTITY lambda "&#955;">
-<!ENTITY lang "&#9001;">
-<!ENTITY laquo "&#171;">
-<!ENTITY larr "&#8592;">
-<!ENTITY lArr "&#8656;">
-<!ENTITY lceil "&#8968;">
-<!ENTITY ldquo "&#8220;">
-<!ENTITY le "&#8804;">
-<!ENTITY lfloor "&#8970;">
-<!ENTITY lowast "&#8727;">
-<!ENTITY loz "&#9674;">
-<!ENTITY lrm "&#8206;">
-<!ENTITY lsaquo "&#8249;">
-<!ENTITY lsquo "&#8216;">
-<!ENTITY lt "&#60;">
-<!ENTITY macr "&#175;">
-<!ENTITY mdash "&#8212;">
-<!ENTITY micro "&#181;">
-<!ENTITY middot "&#183;">
-<!ENTITY minus "&#8722;">
-<!ENTITY Mu "&#924;">
-<!ENTITY mu "&#956;">
-<!ENTITY nabla "&#8711;">
-<!ENTITY nbsp "&#160;">
-<!ENTITY ndash "&#8211;">
-<!ENTITY ne "&#8800;">
-<!ENTITY ni "&#8715;">
-<!ENTITY not "&#172;">
-<!ENTITY notin "&#8713;">
-<!ENTITY nsub "&#8836;">
-<!ENTITY Ntilde "&#209;">
-<!ENTITY ntilde "&#241;">
-<!ENTITY Nu "&#925;">
-<!ENTITY nu "&#957;">
-<!ENTITY Oacute "&#211;">
-<!ENTITY oacute "&#243;">
-<!ENTITY Ocirc "&#212;">
-<!ENTITY ocirc "&#244;">
-<!ENTITY OElig "&#338;">
-<!ENTITY oelig "&#339;">
-<!ENTITY Ograve "&#210;">
-<!ENTITY ograve "&#242;">
-<!ENTITY oline "&#8254;">
-<!ENTITY Omega "&#937;">
-<!ENTITY omega "&#969;">
-<!ENTITY Omicron "&#927;">
-<!ENTITY omicron "&#959;">
-<!ENTITY oplus "&#8853;">
-<!ENTITY or "&#8870;">
-<!ENTITY ordf "&#170;">
-<!ENTITY ordm "&#186;">
-<!ENTITY Oslash "&#216;">
-<!ENTITY oslash "&#248;">
-<!ENTITY Otilde "&#213;">
-<!ENTITY otilde "&#245;">
-<!ENTITY otimes "&#8855;">
-<!ENTITY Ouml "&#214;">
-<!ENTITY ouml "&#246;">
-<!ENTITY para "&#182;">
-<!ENTITY part "&#8706;">
-<!ENTITY permil "&#8240;">
-<!ENTITY perp "&#8869;">
-<!ENTITY Phi "&#934;">
-<!ENTITY phi "&#966;">
-<!ENTITY Pi "&#928;">
-<!ENTITY pi "&#960;">
-<!ENTITY piv "&#982;">
-<!ENTITY plusmn "&#177;">
-<!ENTITY pound "&#163;">
-<!ENTITY prime "&#8242;">
-<!ENTITY Prime "&#8243;">
-<!ENTITY prod "&#8719;">
-<!ENTITY prop "&#8733;">
-<!ENTITY Psi "&#936;">
-<!ENTITY psi "&#968;">
-<!ENTITY quot "&#34;">
-<!ENTITY radic "&#8730;">
-<!ENTITY rang "&#9002;">
-<!ENTITY raquo "&#187;">
-<!ENTITY rarr "&#8594;">
-<!ENTITY rArr "&#8658;">
-<!ENTITY rceil "&#8969;">
-<!ENTITY rdquo "&#8221;">
-<!ENTITY real "&#8476;">
-<!ENTITY reg "&#174;">
-<!ENTITY rfloor "&#8971;">
-<!ENTITY Rho "&#929;">
-<!ENTITY rho "&#961;">
-<!ENTITY rlm "&#8207;">
-<!ENTITY rsaquo "&#8250;">
-<!ENTITY rsquo "&#8217;">
-<!ENTITY sbquo "&#8218;">
-<!ENTITY Scaron "&#352;">
-<!ENTITY scaron "&#353;">
-<!ENTITY sdot "&#8901;">
-<!ENTITY sect "&#167;">
-<!ENTITY shy "&#173;">
-<!ENTITY Sigma "&#931;">
-<!ENTITY sigma "&#963;">
-<!ENTITY sigmaf "&#962;">
-<!ENTITY sim "&#8764;">
-<!ENTITY spades "&#9824;">
-<!ENTITY sub "&#8834;">
-<!ENTITY sube "&#8838;">
-<!ENTITY sum "&#8721;">
-<!ENTITY sup "&#8835;">
-<!ENTITY sup1 "&#185;">
-<!ENTITY sup2 "&#178;">
-<!ENTITY sup3 "&#179;">
-<!ENTITY supe "&#8839;">
-<!ENTITY szlig "&#223;">
-<!ENTITY Tau "&#932;">
-<!ENTITY tau "&#964;">
-<!ENTITY there4 "&#8756;">
-<!ENTITY Theta "&#920;">
-<!ENTITY theta "&#952;">
-<!ENTITY thetasym "&#977;">
-<!ENTITY thinsp "&#8201;">
-<!ENTITY THORN "&#222;">
-<!ENTITY thorn "&#254;">
-<!ENTITY tilde "&#732;">
-<!ENTITY times "&#215;">
-<!ENTITY trade "&#8482;">
-<!ENTITY Uacute "&#218;">
-<!ENTITY uacute "&#250;">
-<!ENTITY uarr "&#8593;">
-<!ENTITY uArr "&#8657;">
-<!ENTITY Ucirc "&#219;">
-<!ENTITY ucirc "&#251;">
-<!ENTITY Ugrave "&#217;">
-<!ENTITY ugrave "&#249;">
-<!ENTITY uml "&#168;">
-<!ENTITY upsih "&#978;">
-<!ENTITY Upsilon "&#933;">
-<!ENTITY upsilon "&#965;">
-<!ENTITY Uuml "&#220;">
-<!ENTITY uuml "&#252;">
-<!ENTITY weierp "&#8472;">
-<!ENTITY Xi "&#926;">
-<!ENTITY xi "&#958;">
-<!ENTITY Yacute "&#221;">
-<!ENTITY yacute "&#253;">
-<!ENTITY yen "&#165;">
-<!ENTITY Yuml "&#376;">
-<!ENTITY yuml "&#255;">
-<!ENTITY Zeta "&#918;">
-<!ENTITY zeta "&#950;">
-<!ENTITY zwj "&#8205;">
-<!ENTITY zwnj "&#8204;">`.replace(/\n/g, ' ');
-
-  /**
-   * A reasonably strict xml declaration.
-   */
-  const XML_DECL = '<?xml version="1.0" standalone="no"?>';
-
-  /**
-   * The beginning of the XML doctype declaration.
-   */
-  const DOCTYPE_START = `<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [`;
-
-  /**
-   * The end of the XML docype declaration.
-   */
-  const DOCTYPE_END = ']>';
-
-  /**
-   * A full header for an SVG XML document.
-   */
-  const SVG_XML_HEADER = `${XML_DECL}
-    ${DOCTYPE_START}${HTML_ENTITIES}${DOCTYPE_END}`;
 
     void Promise.all([...diagrams].map(renderOneMarmaid));
   });
@@ -9414,13 +9129,28 @@ Name: theme_id, dtype: int64</pre>
 </div>
 </div>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Average parts 1954: 12.4
+Average parts 2017: 221.8
+Complexity ratio 1954 → 2017: 18×
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><strong>1954: 12.4 average parts per set. 2017: 221.8 average parts per set.</strong> That is an <strong>18× increase</strong> over 63 years — faster than the 8× figure cited for the full 1950s-to-2020s range, because 1954 represents an exceptionally simple product era even within that decade. The comparison shows how far LEGO's baseline complexity floor has risen: a set with 12 parts would be a novelty accessory today, not a retail product.</p>
+<p><strong>1954: 12.4 average parts per set. 2017: 221.8 average parts per set.</strong> That is an <strong>18× increase</strong> over 63 years. 1954 sits at the low end of the 1950s average — a cluster of simple brick sets with barely a dozen parts each. The decade summary in Analysis 5 shows how this growth looks across every decade from the 1940s to the 2020s.</p>
 </div>
 </div>
 </div>
@@ -9902,6 +9632,23 @@ Name: count, dtype: int64</pre>
 </div>
 </div>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Theme 18: 11 sets
+Theme 158: 753 sets
+Theme 209: 10 sets
+Theme 261: 2 sets
+Total across all four Star Wars theme IDs: 776 sets
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -10326,6 +10073,23 @@ Starter       63.795831    39.0  11177
 </div>
 </div>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Total sets in catalogue:        15,710
+Sets excluded (0 parts):        1,796
+Sets clustered:                 13,914
+Starter % of all sets:          71.1%
+Starter % of clustered sets:    80.3%
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -10420,6 +10184,30 @@ Duplo and Explore    96.875000
 Town                 93.930636
 Supplemental         90.583804
 Technic              89.115646
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Expert-tier sets by theme:
+theme_name
+Creator Expert               12
+Ultimate Collector Series    11
+Modular Buildings             4
+Construction                  4
+LEGO Art                      4
+Mosaic                        3
+Traffic                       3
+Educational and Dacta         3
+Star Wars                     2
+Sculptures                    2
 </pre>
 </div>
 </div>
@@ -10570,6 +10358,22 @@ Total unique colours used in sets: 132
 <div class="jp-OutputArea-child">
 <div class="jp-RenderedImage jp-OutputArea-output" tabindex="0">
 <img alt="No description has been provided for this image" class="" src="data:image/png;base64,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ls/xzTffKDExUREREQoJCbnlXE9PT+ufU1JS1Lp1a23ZskX16tVTv379FBcXp/nz52vVqlWaP3++OnfufLuXqIULF6pLly7y8PDQ008/reLFi2vNmjUaMWKEVq1apZiYGJvnzanOnTvr559/Vrt27RQQEKAHHnhAxhi1a9dOW7duVdOmTdW+fXvly5dPf/zxhxYvXqzIyEiVKVPmjp63a9eu2rp1q8LDw+Xm5qavv/5avXv3Vv78+fX8889LkvVDhA0bNigyMtIabgsVKmSzVkpKilq1aqWkpCR17NhRHh4eKlGihCRp4sSJ6tevnzUw+vj46L///a9effVVff/991qwYIFNMB41apSGDRtmfb/kz59f8+fP12+//XZHrzedMUZdu3bV/PnzVapUKXXt2lV+fn76448/NH/+fLVv315ly5aVZN/vvST98ssvatq0qS5fvqzOnTurUqVK+umnn9S0aVPVrl3b7lq3bNmisWPHqkOHDnr55Ze1c+dOffXVV/rhhx+0bds2a48l6ciRIwoNDdWpU6cUFhamTp06KS4uTgsXLtTKlSu1du1aNWzY0Gb9W/3c7kT//v31zjvvaOXKlbp06ZL1/WJvP8+fP68WLVro119/VZ06dfTiiy8qLS1N+/fv1zvvvKPXXnvNunZUVJQ8PDzUrFkzlSxZUufOndPSpUv1xBNPaNKkSerbt69Njfa+z+ytHQAyZQAgjzt69KiRZNq1a2eMMaZ///5Gkvn000+tc2JiYowk88ILL9g8NiIiwkgyX3zxhc14bGysKVOmjClWrJhJTk42xhhz8eJFky9fPtOxY0frvK1btxpJpnXr1kaSOXbsmHVbgwYNjK+vr7l58+ZtX0NkZKSRZDZv3nzbucHBwcbNzc0MHz4809vHH39snbthwwYjyTRv3vy26/7dH3/8YSSZUqVK3XbuqlWrjCTTqlWr287t0aOHkWQ+//xzu+oZOXKkkWS6detm0tLSrOM///yz8fT0NIULFzaJiYnW8enTpxtJZvr06daxxMREU6hQIePp6Wl+/vln63haWpr1vTBq1CjrePp7KzIyMtOaJJkWLVrYjLVo0cJIMnXq1DHx8fE22/bs2WMkmcceeyzDWteuXTNJSUm37UNW7+X0523YsKFJSEiwju/fv9+4u7ubKlWq2MwfPny4kWRiYmIyfZ7g4GAjyYSF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UqtWrSRJixYt0u7du9W8eXNraHMVHx8fPfnkk7p69ao++OADux+ffpbrt956K8s5586d0+eff658+fJl+Md/Zp544gn5+flp4cKF1q/HZiV9L5afn58eeOABHT58ONN/rG/YsEGSrGeVz0r6hyCZfR341KlTOnLkiB544AHrXu5bBYT0r1jnlMViUbVq1dS7d2+tXr1akrR06dI7WtMe6XvU7d37Ld26jz/99JOSk5NtfhbpZ/jO7LrrWV2LvXDhwoqLi8sQvK9cuWL92m+6ggULKiQkREePHs2w7e/s/b1Prz2zy0ddvnw5wyUEs+PHH3/M8DXt5ORk7dixQ15eXqpcubIkWc9Kbs//o5zp/fffV3JyssLDw60B195+1q9fX/ny5VNMTIzNpcEyc+TIEUnSP//5zwzbMnvf2Ps+y8nfAQCQGUI3gPuWm5ubxowZo5SUFI0cOTLD9sDAQD311FPatGmT3n333UyPf966dWuGaze3bNlSly9f1pQpU1SvXj3rPz4rVqyo0qVL691331VaWprLv1qebsyYMSpatKhGjhypSZMmZRqykpOTdf369Qzjr7/+usqXL6/Zs2dr5MiRGR4bGxurf/7zn4qPj9drr7122+NppT+D7LvvvquUlBR16NAh09CSmpqqmTNn6sUXX7SORUZG6saNG4qKirL5Wf3yyy+aPn26/P39b3tpn0cffVT+/v6aPn269u3bZx03xigqKko3btywuSa3n5+fKleurB9++MHmGuRJSUmKioq67Wv9u6NHj+rXX3/NMJ6+F87Ly8vuNXMqICBAkrK8NvStREREyN3dXePHj7c5pvbGjRvWazj/tY8RERFyc3PT+PHjbfZCJiYmZnmJufr16+vGjRv68ssvrWPpP6fMvu7bu3dvpaamqlevXhmO+7127Zr1q8T2/t6XLVtWzZs31549e2xqkf783Ur/urQ9Dhw4oC+++MJm7N1339W5c+fUtWtXeXh4SPrzvAANGzbUV199pfnz52dYJy0tzfqBkzOlpKRo3LhxGjlypAoWLKixY8dat9nbzxIlSujxxx/XkSNHMpxTQpLNBy3BwcGSMn7gMXfuXP3vf//L8Fh732c5/TsAAP6OY7oB3Ncee+wxNW7cOMs9GR999JEOHDiggQMHavbs2WrcuLH8/f114sQJ7dixQ4cOHdKZM2fk7e1tfUzL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Sv3797feT0tL04ULF1SkSBFZLBan1psXJSYmqkyZMjpx4oT8/PxcXc59hd67Fv13HXrvOvTedei9a9F/16H3rkPv74wxRklJSQoKCrrlvHs+dHt4eOjBBx/U6tWr9dhjj1nHV69erUcffTTTx3h6esrT09NmrFChQs4s877g5+fHL6OL0HvXov+uQ+9dh967Dr13LfrvOvTedeh9zvn7+992zj0fuiWpf//+6t69u+rXr6/GjRtr6tSpOn78uF588UVXlwYAAAAAQJZyReh++umnFR8fr5EjR+rMmTOqUaOG/ve//yk4ONjVpQEAAAAAkKVcEbolqVevXurVq5ery7gveXp6avjw4Rm+sg/no/euRf9dh967Dr13HXrvWvTfdei969D7u+OeP3s5AAAAAAC5VT5XFwAAAAAAQF5F6AYAAAAAwEkI3QAAAAAAOAmhO4/auHGjOnbsqKCgIFksFi1ZssRm+9mzZ9WjRw8FBQXJ29tb7du316FDhzJdyxij8PDwTNe5ePGiunfvLn9/f/n7+6t79+66dOmSc15ULuKI/oeGhspisdjcunTpYjOH/mfkqPf+5s2b1apVK/n4+KhQoUIKDQ1VcnKydTu9z+hOe//HH39keM+n37755hvrPHqfkSPe97GxserevbsCAwPl4+OjevXqacGCBTZz6H3mHNH/I0eO6LHHHlOxYsXk5+enp556SmfPnrWZQ/9tjR07Vg0aNJCvr6+KFy+uTp066cCBAzZzjDGKjo5WUFCQvLy8FBoaqn379tnMSUlJUd++fVW0aFH5+Pjon//8p06ePGkzh97bclTvp06dqtDQUPn5+clisWTaU3qfkSP6f+HCBfXt21dVqlSRt7e3ypYtq5dfflkJCQk269B/xyB051FXrlxR7dq1NXny5AzbjDHq1KmTfv/9d3377bfatWuXgoOD1aZNG125ciXD/AkTJshisWT6PBEREdq9e7dWrFihFStWaPfu3erevbvDX09u46j+P//88zpz5oz19umnn9psp/8ZOaL3mzdvVvv27RUWFqaffvpJ27ZtU58+fZQv3//9L5PeZ3SnvS9TpozN+/3MmTMaMWKEfHx8FB4ebl2L3mfkiPd99+7ddeDAAS1dulR79+5V586d9fTTT2vXrl3WOfQ+c3fa/ytXrigsLEwWi0Xr1q3Tjz/+qOvXr6tjx45K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"/>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>New colours in 1990s:                  38
+New colours in 2000s:                  53
+1990s + 2000s combined:                91
+Share of 132 production colours: 68.9%
+</pre>
 </div>
 </div>
 </div>
@@ -11072,201 +10876,201 @@ Collectible Minifigures               33
 <div class="jp-OutputArea-child jp-OutputArea-executeResult">
 <div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html" tabindex="0">
 <style type="text/css">
-#T_69dfd_row0_col1, #T_69dfd_row0_col2, #T_69dfd_row0_col5, #T_69dfd_row1_col3, #T_69dfd_row1_col5, #T_69dfd_row2_col5, #T_69dfd_row3_col5, #T_69dfd_row4_col5 {
+#T_34295_row0_col1, #T_34295_row0_col2, #T_34295_row0_col5, #T_34295_row1_col3, #T_34295_row1_col5, #T_34295_row2_col5, #T_34295_row3_col5, #T_34295_row4_col5 {
   background-color: #f7fbff;
   color: #000000;
 }
-#T_69dfd_row0_col3, #T_69dfd_row5_col1 {
+#T_34295_row0_col3, #T_34295_row5_col1 {
   background-color: #b7d4ea;
   color: #000000;
 }
-#T_69dfd_row1_col1 {
+#T_34295_row1_col1 {
   background-color: #f4f9fe;
   color: #000000;
 }
-#T_69dfd_row1_col2 {
+#T_34295_row1_col2 {
   background-color: #f5f9fe;
   color: #000000;
 }
-#T_69dfd_row2_col1 {
+#T_34295_row2_col1 {
   background-color: #edf4fc;
   color: #000000;
 }
-#T_69dfd_row2_col2 {
+#T_34295_row2_col2 {
   background-color: #deebf7;
   color: #000000;
 }
-#T_69dfd_row2_col3 {
+#T_34295_row2_col3 {
   background-color: #d3e4f3;
   color: #000000;
 }
-#T_69dfd_row3_col1 {
+#T_34295_row3_col1 {
   background-color: #e5eff9;
   color: #000000;
 }
-#T_69dfd_row3_col2 {
+#T_34295_row3_col2 {
   background-color: #cddff1;
   color: #000000;
 }
-#T_69dfd_row3_col3 {
+#T_34295_row3_col3 {
   background-color: #abd0e6;
   color: #000000;
 }
-#T_69dfd_row4_col1 {
+#T_34295_row4_col1 {
   background-color: #d4e4f4;
   color: #000000;
 }
-#T_69dfd_row4_col2 {
+#T_34295_row4_col2 {
   background-color: #afd1e7;
   color: #000000;
 }
-#T_69dfd_row4_col3 {
+#T_34295_row4_col3 {
   background-color: #c4daee;
   color: #000000;
 }
-#T_69dfd_row5_col2 {
+#T_34295_row5_col2 {
   background-color: #4896c8;
   color: #f1f1f1;
 }
-#T_69dfd_row5_col3 {
+#T_34295_row5_col3 {
   background-color: #91c3de;
   color: #000000;
 }
-#T_69dfd_row5_col5 {
+#T_34295_row5_col5 {
   background-color: #f1f7fd;
   color: #000000;
 }
-#T_69dfd_row6_col1 {
+#T_34295_row6_col1 {
   background-color: #57a0ce;
   color: #f1f1f1;
 }
-#T_69dfd_row6_col2, #T_69dfd_row7_col1, #T_69dfd_row8_col3, #T_69dfd_row8_col5 {
+#T_34295_row6_col2, #T_34295_row7_col1, #T_34295_row8_col3, #T_34295_row8_col5 {
   background-color: #08306b;
   color: #f1f1f1;
 }
-#T_69dfd_row6_col3 {
+#T_34295_row6_col3 {
   background-color: #4d99ca;
   color: #f1f1f1;
 }
-#T_69dfd_row6_col5 {
+#T_34295_row6_col5 {
   background-color: #b2d2e8;
   color: #000000;
 }
-#T_69dfd_row7_col2 {
+#T_34295_row7_col2 {
   background-color: #08488e;
   color: #f1f1f1;
 }
-#T_69dfd_row7_col3 {
+#T_34295_row7_col3 {
   background-color: #2979b9;
   color: #f1f1f1;
 }
-#T_69dfd_row7_col5 {
+#T_34295_row7_col5 {
   background-color: #2a7ab9;
   color: #f1f1f1;
 }
-#T_69dfd_row8_col1 {
+#T_34295_row8_col1 {
   background-color: #e3eef9;
   color: #000000;
 }
-#T_69dfd_row8_col2 {
+#T_34295_row8_col2 {
   background-color: #bad6eb;
   color: #000000;
 }
 </style>
-<table id="T_69dfd">
+<table id="T_34295">
 <caption>LEGO Production Summary by Decade</caption>
 <thead>
 <tr>
 <th class="blank level0"> </th>
-<th class="col_heading level0 col0" id="T_69dfd_level0_col0">Decade</th>
-<th class="col_heading level0 col1" id="T_69dfd_level0_col1">Total Sets</th>
-<th class="col_heading level0 col2" id="T_69dfd_level0_col2">Unique Themes</th>
-<th class="col_heading level0 col3" id="T_69dfd_level0_col3">Avg Parts</th>
-<th class="col_heading level0 col4" id="T_69dfd_level0_col4">Most Popular Theme</th>
-<th class="col_heading level0 col5" id="T_69dfd_level0_col5">% Licensed</th>
+<th class="col_heading level0 col0" id="T_34295_level0_col0">Decade</th>
+<th class="col_heading level0 col1" id="T_34295_level0_col1">Total Sets</th>
+<th class="col_heading level0 col2" id="T_34295_level0_col2">Unique Themes</th>
+<th class="col_heading level0 col3" id="T_34295_level0_col3">Avg Parts</th>
+<th class="col_heading level0 col4" id="T_34295_level0_col4">Most Popular Theme</th>
+<th class="col_heading level0 col5" id="T_34295_level0_col5">% Licensed</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<th class="row_heading level0 row0" id="T_69dfd_level0_row0">0</th>
-<td class="data row0 col0" id="T_69dfd_row0_col0">1940s</td>
-<td class="data row0 col1" id="T_69dfd_row0_col1">5</td>
-<td class="data row0 col2" id="T_69dfd_row0_col2">2</td>
-<td class="data row0 col3" id="T_69dfd_row0_col3">99.6</td>
-<td class="data row0 col4" id="T_69dfd_row0_col4">System</td>
-<td class="data row0 col5" id="T_69dfd_row0_col5">0.0%</td>
+<th class="row_heading level0 row0" id="T_34295_level0_row0">0</th>
+<td class="data row0 col0" id="T_34295_row0_col0">1940s</td>
+<td class="data row0 col1" id="T_34295_row0_col1">5</td>
+<td class="data row0 col2" id="T_34295_row0_col2">2</td>
+<td class="data row0 col3" id="T_34295_row0_col3">99.6</td>
+<td class="data row0 col4" id="T_34295_row0_col4">System</td>
+<td class="data row0 col5" id="T_34295_row0_col5">0.0%</td>
 </tr>
 <tr>
-<th class="row_heading level0 row1" id="T_69dfd_level0_row1">1</th>
-<td class="data row1 col0" id="T_69dfd_row1_col0">1950s</td>
-<td class="data row1 col1" id="T_69dfd_row1_col1">135</td>
-<td class="data row1 col2" id="T_69dfd_row1_col2">6</td>
-<td class="data row1 col3" id="T_69dfd_row1_col3">32.3</td>
-<td class="data row1 col4" id="T_69dfd_row1_col4">Town Plan</td>
-<td class="data row1 col5" id="T_69dfd_row1_col5">0.0%</td>
+<th class="row_heading level0 row1" id="T_34295_level0_row1">1</th>
+<td class="data row1 col0" id="T_34295_row1_col0">1950s</td>
+<td class="data row1 col1" id="T_34295_row1_col1">135</td>
+<td class="data row1 col2" id="T_34295_row1_col2">6</td>
+<td class="data row1 col3" id="T_34295_row1_col3">32.3</td>
+<td class="data row1 col4" id="T_34295_row1_col4">Town Plan</td>
+<td class="data row1 col5" id="T_34295_row1_col5">0.0%</td>
 </tr>
 <tr>
-<th class="row_heading level0 row2" id="T_69dfd_level0_row2">2</th>
-<td class="data row2 col0" id="T_69dfd_row2_col0">1960s</td>
-<td class="data row2 col1" id="T_69dfd_row2_col1">376</td>
-<td class="data row2 col2" id="T_69dfd_row2_col2">37</td>
-<td class="data row2 col3" id="T_69dfd_row2_col3">73.8</td>
-<td class="data row2 col4" id="T_69dfd_row2_col4">System</td>
-<td class="data row2 col5" id="T_69dfd_row2_col5">0.0%</td>
+<th class="row_heading level0 row2" id="T_34295_level0_row2">2</th>
+<td class="data row2 col0" id="T_34295_row2_col0">1960s</td>
+<td class="data row2 col1" id="T_34295_row2_col1">376</td>
+<td class="data row2 col2" id="T_34295_row2_col2">37</td>
+<td class="data row2 col3" id="T_34295_row2_col3">73.8</td>
+<td class="data row2 col4" id="T_34295_row2_col4">System</td>
+<td class="data row2 col5" id="T_34295_row2_col5">0.0%</td>
 </tr>
 <tr>
-<th class="row_heading level0 row3" id="T_69dfd_level0_row3">3</th>
-<td class="data row3 col0" id="T_69dfd_row3_col0">1970s</td>
-<td class="data row3 col1" id="T_69dfd_row3_col1">620</td>
-<td class="data row3 col2" id="T_69dfd_row3_col2">62</td>
-<td class="data row3 col3" id="T_69dfd_row3_col3">107.8</td>
-<td class="data row3 col4" id="T_69dfd_row3_col4">Construction</td>
-<td class="data row3 col5" id="T_69dfd_row3_col5">0.0%</td>
+<th class="row_heading level0 row3" id="T_34295_level0_row3">3</th>
+<td class="data row3 col0" id="T_34295_row3_col0">1970s</td>
+<td class="data row3 col1" id="T_34295_row3_col1">620</td>
+<td class="data row3 col2" id="T_34295_row3_col2">62</td>
+<td class="data row3 col3" id="T_34295_row3_col3">107.8</td>
+<td class="data row3 col4" id="T_34295_row3_col4">Construction</td>
+<td class="data row3 col5" id="T_34295_row3_col5">0.0%</td>
 </tr>
 <tr>
-<th class="row_heading level0 row4" id="T_69dfd_level0_row4">4</th>
-<td class="data row4 col0" id="T_69dfd_row4_col0">1980s</td>
-<td class="data row4 col1" id="T_69dfd_row4_col1">1212</td>
-<td class="data row4 col2" id="T_69dfd_row4_col2">91</td>
-<td class="data row4 col3" id="T_69dfd_row4_col3">90.4</td>
-<td class="data row4 col4" id="T_69dfd_row4_col4">Technic</td>
-<td class="data row4 col5" id="T_69dfd_row4_col5">0.0%</td>
+<th class="row_heading level0 row4" id="T_34295_level0_row4">4</th>
+<td class="data row4 col0" id="T_34295_row4_col0">1980s</td>
+<td class="data row4 col1" id="T_34295_row4_col1">1212</td>
+<td class="data row4 col2" id="T_34295_row4_col2">91</td>
+<td class="data row4 col3" id="T_34295_row4_col3">90.4</td>
+<td class="data row4 col4" id="T_34295_row4_col4">Technic</td>
+<td class="data row4 col5" id="T_34295_row4_col5">0.0%</td>
 </tr>
 <tr>
-<th class="row_heading level0 row5" id="T_69dfd_level0_row5">5</th>
-<td class="data row5 col0" id="T_69dfd_row5_col0">1990s</td>
-<td class="data row5 col1" id="T_69dfd_row5_col1">2041</td>
-<td class="data row5 col2" id="T_69dfd_row5_col2">170</td>
-<td class="data row5 col3" id="T_69dfd_row5_col3">124.7</td>
-<td class="data row5 col4" id="T_69dfd_row5_col4">Technic</td>
-<td class="data row5 col5" id="T_69dfd_row5_col5">1.0%</td>
+<th class="row_heading level0 row5" id="T_34295_level0_row5">5</th>
+<td class="data row5 col0" id="T_34295_row5_col0">1990s</td>
+<td class="data row5 col1" id="T_34295_row5_col1">2041</td>
+<td class="data row5 col2" id="T_34295_row5_col2">170</td>
+<td class="data row5 col3" id="T_34295_row5_col3">124.7</td>
+<td class="data row5 col4" id="T_34295_row5_col4">Technic</td>
+<td class="data row5 col5" id="T_34295_row5_col5">1.0%</td>
 </tr>
 <tr>
-<th class="row_heading level0 row6" id="T_69dfd_level0_row6">6</th>
-<td class="data row6 col0" id="T_69dfd_row6_col0">2000s</td>
-<td class="data row6 col1" id="T_69dfd_row6_col1">3831</td>
-<td class="data row6 col2" id="T_69dfd_row6_col2">279</td>
-<td class="data row6 col3" id="T_69dfd_row6_col3">166.4</td>
-<td class="data row6 col4" id="T_69dfd_row6_col4">Star Wars</td>
-<td class="data row6 col5" id="T_69dfd_row6_col5">9.7%</td>
+<th class="row_heading level0 row6" id="T_34295_level0_row6">6</th>
+<td class="data row6 col0" id="T_34295_row6_col0">2000s</td>
+<td class="data row6 col1" id="T_34295_row6_col1">3831</td>
+<td class="data row6 col2" id="T_34295_row6_col2">279</td>
+<td class="data row6 col3" id="T_34295_row6_col3">166.4</td>
+<td class="data row6 col4" id="T_34295_row6_col4">Star Wars</td>
+<td class="data row6 col5" id="T_34295_row6_col5">9.7%</td>
 </tr>
 <tr>
-<th class="row_heading level0 row7" id="T_69dfd_level0_row7">7</th>
-<td class="data row7 col0" id="T_69dfd_row7_col0">2010s</td>
-<td class="data row7 col1" id="T_69dfd_row7_col1">6813</td>
-<td class="data row7 col2" id="T_69dfd_row7_col2">254</td>
-<td class="data row7 col3" id="T_69dfd_row7_col3">195.6</td>
-<td class="data row7 col4" id="T_69dfd_row7_col4">Star Wars</td>
-<td class="data row7 col5" id="T_69dfd_row7_col5">22.2%</td>
+<th class="row_heading level0 row7" id="T_34295_level0_row7">7</th>
+<td class="data row7 col0" id="T_34295_row7_col0">2010s</td>
+<td class="data row7 col1" id="T_34295_row7_col1">6813</td>
+<td class="data row7 col2" id="T_34295_row7_col2">254</td>
+<td class="data row7 col3" id="T_34295_row7_col3">195.6</td>
+<td class="data row7 col4" id="T_34295_row7_col4">Star Wars</td>
+<td class="data row7 col5" id="T_34295_row7_col5">22.2%</td>
 </tr>
 <tr>
-<th class="row_heading level0 row8" id="T_69dfd_level0_row8">8</th>
-<td class="data row8 col0" id="T_69dfd_row8_col0">2020s</td>
-<td class="data row8 col1" id="T_69dfd_row8_col1">677</td>
-<td class="data row8 col2" id="T_69dfd_row8_col2">82</td>
-<td class="data row8 col3" id="T_69dfd_row8_col3">258.6</td>
-<td class="data row8 col4" id="T_69dfd_row8_col4">Friends</td>
-<td class="data row8 col5" id="T_69dfd_row8_col5">30.9%</td>
+<th class="row_heading level0 row8" id="T_34295_level0_row8">8</th>
+<td class="data row8 col0" id="T_34295_row8_col0">2020s</td>
+<td class="data row8 col1" id="T_34295_row8_col1">677</td>
+<td class="data row8 col2" id="T_34295_row8_col2">82</td>
+<td class="data row8 col3" id="T_34295_row8_col3">258.6</td>
+<td class="data row8 col4" id="T_34295_row8_col4">Friends</td>
+<td class="data row8 col5" id="T_34295_row8_col5">30.9%</td>
 </tr>
 </tbody>
 </table>
@@ -11314,6 +11118,21 @@ Licensed vs Original — avg unique fig types per set:
 ip_type                                                   
 Licensed              2.95        3.54                4.33
 Original              2.33        2.78                4.91
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Licensed avg unique fig types: 2.95
+Original avg unique fig types: 2.33
+Licensed premium:              27.0%
 </pre>
 </div>
 </div>
@@ -11415,6 +11234,75 @@ Growth 1970s → 2010s: 56.6%
 </div>
 </div>
 </div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noInput">
+<div class="jp-Cell-outputWrapper">
+<div class="jp-Collapser jp-OutputCollapser jp-Cell-outputCollapser">
+</div>
+<div class="jp-OutputArea jp-Cell-outputArea">
+<div class="jp-OutputArea-child">
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
+<pre>Avg unique fig types by licensed franchise (all, sorted by avg):
+                                            avg_unique_figs  set_count
+theme_name                                                            
+Stranger Things                                         8.0          1
+Ghostbusters                                            7.5          2
+Ultimate Collector Series                               6.4         25
+Disney                                                  5.0          3
+Pirates of the Caribbean                                4.7         14
+Avatar                                                  4.5          2
+Harry Potter                                            4.2         80
+Indiana Jones                                           4.2         17
+Justice League                                          4.0         15
+The Lord of the Rings                                   4.0         15
+The Hobbit                                              3.9         20
+The Lone Ranger                                         3.9          8
+Scooby-Doo                                              3.8          6
+Prince of Persia                                        3.8          6
+Teenage Mutant Ninja Turtles                            3.6         19
+The LEGO Movie                                          3.5         28
+X-Men                                                   3.5          2
+Avengers                                                3.4         49
+Spider-Man                                              3.2         46
+Star Wars                                               3.2        482
+Minions                                                 3.0          2
+Batman                                                  3.0         63
+DC Comics Super Heroes                                  3.0          4
+Fantastic Beasts                                        3.0          2
+Minecraft                                               2.9         53
+Jurassic World                                          2.9         28
+SpongeBob SquarePants                                   2.9         14
+The LEGO Movie II                                       2.8         37
+Trolls: World Tour                                      2.8          9
+Cars                                                    2.7         31
+Overwatch                                               2.7          6
+Guardians of the Galaxy                                 2.7          9
+Super Heroes Marvel                                     2.5         32
+UCS                                                     2.5          2
+The Powerpuff Girls                                     2.5          2
+Jurassic Park III                                       2.5          2
+Superman                                                2.4          7
+Iron Man                                                2.4          5
+Jurassic World: Fallen Kingdom                          2.3          3
+Toy Story                                               2.3         21
+Marvel Super Heroes                                     2.2          4
+The LEGO Batman Movie                                   2.1         76
+Angry Birds                                             2.0          2
+Frozen II                                               2.0          8
+Disney Princess                                         1.8         57
+DC Super Hero Girls                                     1.7         10
+Super Heroes DC                                         1.6         27
+Harry Potter and Fantastic Beasts Series 1              1.0         22
+Harry Potter and Fantastic Beasts Series 2              1.0         16
+Disney Series 1                                         1.0         18
+The LEGO Movie Series                                   1.0         16
+Disney Series 2                                         1.0         18
+DC Super Heroes                                         1.0         16
+The LEGO Movie Series II                                1.0         20
+</pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
 <div class="jp-Cell-inputWrapper" tabindex="0">
@@ -11422,7 +11310,7 @@ Growth 1970s → 2010s: 56.6%
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p><strong>Finding:</strong> Minifigure density grew <strong>57%</strong> from 3.5 figures per 100 parts in the 1970s to 5.5 in the 2010s — a structural shift, not statistical noise. The trend is not monotonic: density dipped to 3.2 in the 1980s before the 2000s surge. The steepest single-decade increase occurs between the 1990s (3.2) and the 2000s (4.4): the decade in which Star Wars, Harry Potter, and a dozen other franchises entered the catalogue simultaneously.</p>
-<p>The licensed advantage sits in character <em>variety</em>, not raw density. Licensed sets average <strong>2.95 unique character types per set</strong> versus 2.33 for original IP — a <strong>27% premium</strong>. The effect is strongest in narrative-driven franchises where character identity is the primary purchase driver: Pirates of the Caribbean leads at 4.7 unique fig types per set, followed by Harry Potter (4.2) and Indiana Jones (4.2). The Ultimate Collector Series — large-scale Star Wars collector builds — averages 6.4 unique character types, reflecting the density of named characters in flagship sets.</p>
+<p>The licensed advantage sits in character <em>variety</em>, not raw density. Licensed sets average <strong>2.95 unique character types per set</strong> versus 2.33 for original IP — a <strong>27% premium</strong>. The effect is strongest in narrative-driven franchises where character identity is the primary purchase driver. Stranger Things (8.0) and Ghostbusters (7.5) show the highest averages, but both represent single-set franchises in this dataset — the figure reflects one set's character roster, not a sustained product strategy. Among franchises with multiple sets, the Ultimate Collector Series averages 6.4 unique character types, Pirates of the Caribbean 4.7, Harry Potter 4.2, and Indiana Jones 4.2.</p>
 <p>Together, the six analyses close the argument. Licensed IP never represented more than 31.5% of annual releases — it was never the <em>majority</em> of what LEGO made. But it changed <em>what LEGO making a set meant</em>: higher parts count, broader colour requirements, and above all, sets engineered around collectible characters rather than generic brick constructions. The turnaround was not just about adding franchise logos to boxes. It was about discovering a product format — the character-dense licensed set — that created a category of buyer LEGO had never previously reached.</p>
 </div>
 </div>
