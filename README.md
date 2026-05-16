@@ -66,6 +66,19 @@ jupyter notebook notebooks/analysis/lego_analysis.ipynb
 
 ---
 
+## Skills Demonstrated
+
+| Analysis | Technique |
+|----------|-----------|
+| Licensed vs original classification | Feature engineering · business framing |
+| K-Means complexity clustering | Unsupervised ML · StandardScaler · KMeans |
+| Colour palette evolution | Multi-table joins · RGB manipulation · creative data viz |
+| Theme hierarchy resolution | Recursive joins · relational data · graph traversal |
+| Decade summary table | Aggregation · pandas Styler · consulting-style output |
+| Minifigure density | Multi-table joins · feature derivation · hypothesis testing |
+
+---
+
 ## Analysis Flow
 
 ```
