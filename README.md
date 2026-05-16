@@ -29,7 +29,7 @@ jupyter notebook notebooks/analysis/lego_analysis.ipynb
 
 ---
 
-**Sets became more character-focused as licensed IP scaled.** Minifigure density grew from 3.5 figures per 100 parts in the 1970s to 5.5 in the 2010s — a 57% increase. Licensed sets average 2.95 unique character types per set versus 2.33 for original IP — a 27% premium. Pirates of the Caribbean leads at 4.7 unique fig types per set; Harry Potter and Indiana Jones average 4.2. The density trend and licensed share trend move in lockstep from 2000 onward.
+**Sets became more character-focused as licensed IP scaled.** Minifigure density grew from 3.5 figures per 100 parts in the 1970s to 5.5 in the 2010s — a 57% increase. Licensed sets average 2.95 unique character types per set versus 2.33 for original IP — a 27% premium. Among franchises with multiple sets, Pirates of the Caribbean averages 4.7 unique fig types per set, Harry Potter and Indiana Jones 4.2, and the Ultimate Collector Series 6.4. The density trend and licensed share trend move in lockstep from 2000 onward.
 
 ![Minifigure Density by Decade](plots/minifig_density_by_decade.png)
 
@@ -121,7 +121,7 @@ pipeline
     ├── value_counts + pd.merge(themes)                →  top themes bar chart
     │
     │  ── [Analysis 1 — Licensed IP] ─────────────────────────────────────
-    ├── keyword match on theme names                   →  ip_type column
+    ├── manual ground-truth CSV (theme_licensing.csv)  →  ip_type column
     ├── merge(sets, themes[ip_type])                   →  sets_ip
     ├── groupby(['year','ip_type']).size().unstack()   →  stacked bar chart
     └── top-5 licensed themes, annual % licensed
@@ -182,7 +182,7 @@ pipeline
 
 | Column | Derived from | Description |
 |--------|-------------|-------------|
-| ip_type | theme name keyword match | `Licensed` or `Original` |
+| ip_type | theme_licensing.csv manual review | `Licensed` or `Original` |
 | relative_complexity | num_parts / annual mean | Era-relative part count |
 | complexity | KMeans cluster label | Starter / Standard / Advanced / Expert |
 | root_id | recursive parent_id walk | Top-level parent theme ID |
@@ -200,6 +200,7 @@ pipeline
 | Column | Type | Description |
 |--------|------|-------------|
 | id | int | Inventory ID |
+| version | int | Inventory version number |
 | set_num | str | Foreign key → sets.set_num |
 
 ### inventory_minifigs.csv
@@ -238,6 +239,7 @@ lego-dataset-analysis/
 │   ├── colors.csv                     # 135 LEGO colours with RGB and transparency
 │   ├── sets.csv                       # 15,710 sets with year, theme, part count
 │   ├── themes.csv                     # 596 themes in parent/child hierarchy
+│   ├── theme_licensing.csv            # manually reviewed Licensed/Original label per theme
 │   ├── inventories.csv                # set → inventory mapping
 │   ├── inventory_minifigs.csv         # minifigures per inventory
 │   └── inventory_parts.csv.gz         # colour usage per inventory (decompressed at runtime)
