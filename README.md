@@ -33,7 +33,7 @@ jupyter notebook notebooks/analysis/lego_analysis.ipynb
 
 ---
 
-**Set complexity grew 8× over seven decades.** Average parts per set rose from 32 in the 1950s to 259 in the 2020s. K-Means clustering identifies four tiers: Starter, Standard, Advanced, and Expert. Technic and architectural collector sets dominate the Expert cluster; City and seasonal sets anchor the Starter band.
+**Set complexity grew 8× over seven decades.** Average parts per set rose from 32 in the 1950s to 259 in the 2020s. K-Means clustering identifies four tiers: Starter, Standard, Advanced, and Expert. Creator Expert (12 sets) and the Ultimate Collector Series (11 sets) dominate the Expert cluster; City and seasonal sets anchor the Starter band. Technic skews overwhelmingly Starter by set count — hundreds of small accessory bags and service packs are registered as individual Technic sets, dwarfing the handful of large flagship builds.
 
 ![Complexity Clusters](plots/complexity_clusters_scatter.png)
 
@@ -47,7 +47,7 @@ jupyter notebook notebooks/analysis/lego_analysis.ipynb
 
 ---
 
-**LEGO's theme hierarchy is broad, not deep.** Maximum hierarchy depth is 2 levels. Town leads by cumulative set count (1,304 sets), followed by Duplo (1,268). Star Wars ranks fourth with 791 sets despite spanning only 22 years. Technic leads on sub-theme count.
+**LEGO's theme hierarchy is broad, not deep.** Maximum hierarchy depth is 2 levels. Town leads by cumulative set count (1,304 sets), followed by Duplo (1,268). Star Wars ranks fourth with 791 sets despite spanning only 22 years. Town leads on sub-theme count with 61 registered sub-lines — more than any other parent theme.
 
 ![Theme Hierarchy](plots/theme_hierarchy_top15.png)
 
@@ -243,4 +243,4 @@ lego-dataset-analysis/
 
 ## Background
 
-This project was built as part of 100 Days of Code — The Complete Python Pro Bootcamp, Day 74: Aggregate and Merge Data with Pandas. See [docs/COURSE_NOTES.md](docs/COURSE_NOTES.md) for the original exercise brief and concept notes.
+Dataset sourced from [Rebrickable](https://rebrickable.com/downloads/). See [docs/COURSE_NOTES.md](docs/COURSE_NOTES.md) for extended methodology notes.
