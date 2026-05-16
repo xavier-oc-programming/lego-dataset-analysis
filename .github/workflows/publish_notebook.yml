@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'notebooks/analysis/lego_analysis.ipynb'
+  workflow_dispatch:
 
 jobs:
   publish:
